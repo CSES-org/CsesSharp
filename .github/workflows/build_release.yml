@@ -33,7 +33,7 @@ jobs:
           is_release: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
           ls
-          pwsh -ep Bypass -c ./tools/publish-nupkg.ps1 $env:is_release
+          pwsh -ep Bypass -c ./tools/publish_nupkg.ps1 $env:is_release
 
       - name: Upload Nuget packages to GitHub registry
         if: ${{ github.event_name != 'pull_request' }}
