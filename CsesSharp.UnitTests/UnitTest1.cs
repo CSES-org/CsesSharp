@@ -71,5 +71,6 @@ public class TestLoadProfile
             Assert.That(profile.Subjects, Has.Count.EqualTo(4));
             Assert.That(profile.Schedules, Has.Count.EqualTo(3));
         });
+        var yaml = CsesLoader.SaveToYamlString(profile);
     }
 }

@@ -10,6 +10,20 @@ namespace CsesSharp;
 /// </summary>
 public static class CsesLoader
 {
+    private static readonly IDeserializer Deserializer = new DeserializerBuilder()
+        .IgnoreUnmatchedProperties()
+        .WithNamingConvention(UnderscoredNamingConvention.Instance)
+        .WithEnumNamingConvention(UnderscoredNamingConvention.Instance)
+        .WithTypeConverter(DayOfWeekConverter.Instance)
+        .Build();
+    
+    private static readonly ISerializer Serializer = new SerializerBuilder()
+        .WithNamingConvention(UnderscoredNamingConvention.Instance)
+        .WithEnumNamingConvention(UnderscoredNamingConvention.Instance)
+        .WithTypeConverter(DayOfWeekConverter.Instance)
+        .DisableAliases()
+        .Build();
+    
     /// <summary>
     /// 从 YAML 字符串中加载 CSES 配置
     /// </summary>
@@ -17,13 +31,7 @@ public static class CsesLoader
     /// <returns>CSES 配置</returns>
     public static Profile LoadFromYamlString(string content)
     {
-        var deserializer = new DeserializerBuilder()
-            .IgnoreUnmatchedProperties()
-            .WithNamingConvention(UnderscoredNamingConvention.Instance)
-            .WithEnumNamingConvention(UnderscoredNamingConvention.Instance)
-            .WithTypeConverter(DayOfWeekConverter.Instance)
-            .Build();
-        var profile = deserializer.Deserialize<Profile>(content);
+        var profile = Deserializer.Deserialize<Profile>(content);
         foreach (var i in profile.Schedules)
         {
             i.Classes.Sort((x, y) => x.StartTime < y.StartTime ? -1 : 1);
@@ -48,8 +56,7 @@ public static class CsesLoader
     /// <returns>YAML 字符串</returns>
     public static string SaveToYamlString(Profile profile)
     {
-        var serializer = new Serializer();
-        return serializer.Serialize(profile);
+        return Serializer.Serialize(profile);
     }
     
     /// <summary>
