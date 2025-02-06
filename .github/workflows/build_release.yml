@@ -49,4 +49,13 @@ jobs:
         with:
           name: out_nupkgs
           path: ./out/*.nupkg
+          
+      - name: Upload Nuget packages to NuGet Gallery
+        if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') }}
+        env:
+          NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        run: |
+          ls
+          cd out
+          dotnet nuget push *.nupkg -k $env:NUGET_KEY -s https://api.nuget.org/v3/index.json --skip-duplicate
   
